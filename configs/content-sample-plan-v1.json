@@ -1,0 +1,2 @@
+{"algorithm_version":"deterministic-stratified-sampling-v1","allocation_method":"minimum_then_proportional","filters":{},"minimum_per_stratum":2,"plan_id":"delivery-content-sample-v1","schema_version":"sample-plan-v1","seed":20260822,"strata_keys":["dataset_id","record_type","event_month"],"target_size":96}
+

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "issue-v2.schema.json",
+  "title": "IssueV2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["issue_id", "issue_category", "code", "severity", "delivery_id", "dataset_id", "path", "record_id", "line", "member", "field", "reference", "evidence_scope", "stratum_id", "sample_plan_fingerprint", "expected", "observed", "evidence_fingerprint", "remediation_hint", "algorithm_version", "schema_version"],
+  "properties": {
+    "issue_id": {"type": "string", "pattern": "^issue:[0-9a-f]{64}$"},
+    "issue_category": {"type": "string", "enum": ["ISS-01", "ISS-02", "ISS-03", "ISS-04", "ISS-05", "ISS-06", "ISS-07", "ISS-08", "ISS-09"]},
+    "code": {"type": "string", "enum": [
+      "missing_required_file", "unexpected_file", "empty_file", "size_mismatch", "sha256_mismatch", "duplicate_content", "unsupported_entry_type", "unsafe_nested_git",
+      "archive_integrity_failure", "archive_crc_failure", "archive_encrypted", "archive_empty", "archive_truncated", "archive_unsafe_member_path", "archive_limit_exceeded", "archive_extension_mismatch",
+      "format_extension_mismatch", "invalid_utf8", "unexpected_utf8_bom", "json_parse_failure", "jsonl_parse_failure", "tsv_column_mismatch", "unsupported_format", "binary_content_in_text_file",
+      "schema_missing_required_field", "schema_type_mismatch", "schema_version_missing", "schema_version_unsupported", "schema_unknown_field", "schema_record_count_mismatch", "schema_mixed_versions",
+      "content_empty_body", "content_noninformative_body", "content_template_noise", "content_suspected_truncation", "content_field_misalignment", "content_repeated_fragment",
+      "record_exact_duplicate", "duplicate_within_dataset", "duplicate_across_datasets", "source_identity_multiple_versions", "version_content_conflict", "canonical_group_multiple_members_delivered", "canonical_nonselected_member_delivered", "record_near_duplicate_evidence",
+      "event_date_missing", "event_date_invalid", "event_date_outside_expected_range", "event_date_future_as_of", "dataset_time_window_empty", "date_conflict_with_partition", "source_identity_date_conflict",
+      "external_url_dependency", "missing_relative_resource", "unsafe_resource_path", "missing_attachment", "unsupported_resource_scheme", "empty_referenced_resource", "resource_reference_unresolved",
+      "provenance_missing_field", "provenance_dataset_mismatch", "provenance_source_file_missing", "provenance_source_offset_invalid", "provenance_source_offset_out_of_range", "provenance_processing_version_missing", "provenance_version_unsupported", "canonical_evidence_missing", "quality_evidence_missing", "evidence_record_orphan", "evidence_fingerprint_mismatch"
+    ]},
+    "severity": {"type": "string", "enum": ["BLOCKER", "ERROR", "WARNING", "INFO"]},
+    "delivery_id": {"type": "string", "minLength": 1},
+    "dataset_id": {"type": "string", "minLength": 1},
+    "path": {"type": "string", "minLength": 1},
+    "record_id": {"type": ["string", "null"]},
+    "line": {"type": ["integer", "null"], "minimum": 1},
+    "member": {"type": ["string", "null"]},
+    "field": {"type": ["string", "null"]},
+    "reference": {"type": ["string", "null"]},
+    "evidence_scope": {"type": "string", "enum": ["full_metadata_scan", "full_content_scan", "sampled_content"]},
+    "stratum_id": {"type": ["string", "null"], "pattern": "^stratum:[0-9a-f]{64}$"},
+    "sample_plan_fingerprint": {"type": ["string", "null"], "pattern": "^sha256:[0-9a-f]{64}$"},
+    "expected": {"type": ["object", "null"]},
+    "observed": {"type": ["object", "null"]},
+    "evidence_fingerprint": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "remediation_hint": {"type": "string", "minLength": 1},
+    "algorithm_version": {"const": "delivery-content-audit-v1"},
+    "schema_version": {"const": "issue-v2"}
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "canonical-decision-v1.schema.json",
+  "title": "CanonicalDecisionV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decision_id", "group_id", "group_type", "source_star_cluster_id", "structural_representative_id",
+    "selected_canonical_id", "scope", "member_ids", "candidates", "selection_tie_break_level",
+    "all_ineligible_fallback", "evidence", "canonical_config_fingerprint", "algorithm_version", "schema_version"
+  ],
+  "properties": {
+    "decision_id": {"type": "string", "pattern": "^canonical-decision:[0-9a-f]{64}$"},
+    "group_id": {"type": "string", "pattern": "^(star-cluster|star-group):[0-9a-f]{64}$"},
+    "group_type": {"type": "string", "enum": ["singleton", "exact_only", "exact_fuzzy"]},
+    "source_star_cluster_id": {"type": ["string", "null"], "pattern": "^star-cluster:[0-9a-f]{64}$"},
+    "structural_representative_id": {"type": "string", "minLength": 1},
+    "selected_canonical_id": {"type": "string", "minLength": 1},
+    "scope": {"type": "object"},
+    "member_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "candidates": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": [
+          "record_id", "eligible", "hard_failure_reasons", "component_scores", "weighted_total_score_bps",
+          "informative_character_count", "dedup_text_length", "tie_break_key", "selected"
+        ],
+        "properties": {
+          "record_id": {"type": "string", "minLength": 1},
+          "eligible": {"type": "boolean"},
+          "hard_failure_reasons": {
+            "type": "array", "uniqueItems": true,
+            "items": {"type": "string", "enum": ["empty_dedup_text", "unicode_replacement_character", "disallowed_control_character", "insufficient_informative_characters"]}
+          },
+          "component_scores": {
+            "type": "object", "additionalProperties": false,
+            "required": ["body_length_bps", "informative_ratio_bps", "title_presence_bps", "date_presence_bps", "record_type_bps"],
+            "properties": {
+              "body_length_bps": {"type": "integer", "minimum": 0, "maximum": 10000},
+              "informative_ratio_bps": {"type": "integer", "minimum": 0, "maximum": 10000},
+              "title_presence_bps": {"type": "integer", "minimum": 0, "maximum": 10000},
+              "date_presence_bps": {"type": "integer", "minimum": 0, "maximum": 10000},
+              "record_type_bps": {"type": "integer", "minimum": 0, "maximum": 10000}
+            }
+          },
+          "weighted_total_score_bps": {"type": "integer", "minimum": 0, "maximum": 10000},
+          "informative_character_count": {"type": "integer", "minimum": 0},
+          "dedup_text_length": {"type": "integer", "minimum": 0},
+          "tie_break_key": {
+            "type": "object", "additionalProperties": false,
+            "required": ["eligible_rank", "weighted_total_score_bps", "informative_character_count", "dedup_text_length", "title_presence_rank", "date_presence_rank", "record_type_bps", "record_id_ascending"],
+            "properties": {
+              "eligible_rank": {"type": "integer", "minimum": 0, "maximum": 1},
+              "weighted_total_score_bps": {"type": "integer", "minimum": 0, "maximum": 10000},
+              "informative_character_count": {"type": "integer", "minimum": 0},
+              "dedup_text_length": {"type": "integer", "minimum": 0},
+              "title_presence_rank": {"type": "integer", "minimum": 0, "maximum": 1},
+              "date_presence_rank": {"type": "integer", "minimum": 0, "maximum": 1},
+              "record_type_bps": {"type": "integer", "minimum": 0, "maximum": 10000},
+              "record_id_ascending": {"type": "string", "minLength": 1}
+            }
+          },
+          "selected": {"type": "boolean"}
+        }
+      }
+    },
+    "selection_tie_break_level": {"type": "string", "enum": ["singleton", "eligible", "total_score", "informative_character_count", "dedup_text_length", "title_presence", "date_presence", "record_type", "record_id"]},
+    "all_ineligible_fallback": {"type": "boolean"},
+    "evidence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["exact_pair_evidence_ids", "fuzzy_pair_evidence_ids", "direct_center_evidence"],
+      "properties": {
+        "exact_pair_evidence_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^pair:[0-9a-f]{64}$"}},
+        "fuzzy_pair_evidence_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^fuzzy-pair:[0-9a-f]{64}$"}},
+        "direct_center_evidence": {
+          "type": "array",
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["neighbor_representative_id", "fuzzy_pair_id"],
+            "properties": {
+              "neighbor_representative_id": {"type": "string", "minLength": 1},
+              "fuzzy_pair_id": {"type": "string", "pattern": "^fuzzy-pair:[0-9a-f]{64}$"}
+            }
+          }
+        }
+      }
+    },
+    "canonical_config_fingerprint": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "algorithm_version": {"type": "string", "minLength": 1},
+    "schema_version": {"const": "canonical-decision-v1"}
+  }
+}

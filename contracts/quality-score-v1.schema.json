@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "quality-score-v1.schema.json",
+  "title": "QualityScoreV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "record_id", "dataset_id", "category", "record_type", "canonical_group_id", "dimensions",
+    "weighted_score_bps", "hard_failures", "score_based_label", "final_label", "config_version",
+    "algorithm_version", "schema_version", "input_record_fingerprint", "canonical_decision_fingerprint"
+  ],
+  "properties": {
+    "record_id": {"type": "string", "minLength": 1},
+    "dataset_id": {"type": "string", "minLength": 1},
+    "category": {"type": "string", "minLength": 1},
+    "record_type": {"type": "string", "enum": ["article", "comment", "reply"]},
+    "canonical_group_id": {"type": "string", "minLength": 1},
+    "dimensions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["completeness", "cleanliness", "uniqueness", "consistency", "readability", "traceability", "temporal_coverage", "resource_independence"],
+      "properties": {
+        "completeness": {"$ref": "#/$defs/dimension"},
+        "cleanliness": {"$ref": "#/$defs/dimension"},
+        "uniqueness": {"$ref": "#/$defs/dimension"},
+        "consistency": {"$ref": "#/$defs/dimension"},
+        "readability": {"$ref": "#/$defs/dimension"},
+        "traceability": {"$ref": "#/$defs/dimension"},
+        "temporal_coverage": {"$ref": "#/$defs/dimension"},
+        "resource_independence": {"$ref": "#/$defs/dimension"}
+      }
+    },
+    "weighted_score_bps": {"type": "integer", "minimum": 0, "maximum": 10000},
+    "hard_failures": {"type": "array", "uniqueItems": true, "items": {"type": "string", "enum": ["empty_body", "replacement_character", "forbidden_control_character", "insufficient_informative_characters", "missing_traceability", "canonical_evidence_mismatch"]}},
+    "score_based_label": {"type": "string", "enum": ["ACCEPT", "REVIEW", "REJECT"]},
+    "final_label": {"type": "string", "enum": ["ACCEPT", "REVIEW", "REJECT"]},
+    "config_version": {"const": "quality-scoring-config-v1"},
+    "algorithm_version": {"const": "quality-scoring-v1"},
+    "schema_version": {"const": "quality-score-v1"},
+    "input_record_fingerprint": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "canonical_decision_fingerprint": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "dimension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["score_bps", "reasons", "evidence"],
+      "properties": {
+        "score_bps": {"type": "integer", "minimum": 0, "maximum": 10000},
+        "reasons": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "evidence": {"type": "object"}
+      }
+    }
+  }
+}
+

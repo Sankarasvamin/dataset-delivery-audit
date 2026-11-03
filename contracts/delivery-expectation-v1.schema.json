@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "delivery-expectation-v1.schema.json",
+  "title": "DeliveryExpectationV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["delivery_id", "files", "contract_version"],
+  "properties": {
+    "delivery_id": {"type": "string", "minLength": 1},
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["dataset_id", "path", "expected_format", "expected_encoding", "expected_schema_version", "required"],
+        "properties": {
+          "dataset_id": {"type": "string", "minLength": 1},
+          "path": {"type": "string", "minLength": 1},
+          "expected_format": {"type": "string", "minLength": 1},
+          "expected_encoding": {"type": ["string", "null"]},
+          "expected_schema_version": {"type": ["string", "null"]},
+          "expected_size_bytes": {"type": "integer", "minimum": 0},
+          "expected_sha256": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+          "expected_record_count": {"type": "integer", "minimum": 0},
+          "required": {"type": "boolean"}
+        }
+      }
+    },
+    "contract_version": {"const": "delivery-expectation-v1"}
+  }
+}
+

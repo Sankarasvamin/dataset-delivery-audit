@@ -1,0 +1,11 @@
+{
+  "algorithm_version": "delivery-audit-v1",
+  "allowed_record_schema_versions": ["record-v1"],
+  "archive_limits": {
+    "max_member_count": 64,
+    "max_member_uncompressed_bytes": 16384,
+    "max_total_uncompressed_bytes": 32768
+  },
+  "reject_unknown_record_fields": true,
+  "schema_version": "audit-config-v1"
+}

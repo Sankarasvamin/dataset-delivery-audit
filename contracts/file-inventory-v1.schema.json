@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "file-inventory-v1.schema.json",
+  "title": "FileInventoryV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["delivery_id", "dataset_id", "path", "entry_type", "size_bytes", "sha256", "extension", "detected_format", "encoding_status", "empty", "archive", "duplicate_content_group", "expectation_match", "schema_version", "algorithm_version"],
+  "properties": {
+    "delivery_id": {"type": "string", "minLength": 1},
+    "dataset_id": {"type": "string", "minLength": 1},
+    "path": {"type": "string", "minLength": 1},
+    "entry_type": {"enum": ["regular_file", "directory", "symlink"]},
+    "size_bytes": {"type": "integer", "minimum": 0},
+    "sha256": {"type": ["string", "null"], "pattern": "^sha256:[0-9a-f]{64}$"},
+    "extension": {"type": "string"},
+    "detected_format": {"enum": ["json", "jsonl", "tsv", "html", "zip", "tar", "gzip", "text", "binary", "unknown"]},
+    "encoding_status": {"enum": ["utf8", "utf8_bom", "invalid_utf8", "binary", "not_applicable"]},
+    "empty": {"type": "boolean"},
+    "archive": {"type": "boolean"},
+    "duplicate_content_group": {"type": ["string", "null"], "pattern": "^duplicate:[0-9a-f]{64}$"},
+    "expectation_match": {"enum": ["not_evaluated", "matched", "unexpected"]},
+    "schema_version": {"const": "file-inventory-v1"},
+    "algorithm_version": {"const": "delivery-scan-v1"}
+  }
+}
+
